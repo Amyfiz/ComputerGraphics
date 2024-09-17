@@ -57,7 +57,7 @@ namespace FastBitmap
             );
             _stride = _bitmapData.Stride;
             _bytesPerPixel = Image.GetPixelFormatSize(TargetPixelFormat) / 8;
-            _scan0 = (byte*) _bitmapData.Scan0.ToPointer();
+            _scan0 = (byte*)_bitmapData.Scan0.ToPointer();
         }
 
         /// <summary>
@@ -135,10 +135,10 @@ namespace FastBitmap
         public static void ForEach(this FastBitmap source, Action<Color> action)
         {
             for (var y = 0; y < source.Height; y += 1)
-            for (var x = 0; x < source.Width; x += 1)
-                action(source[x, y]);
+                for (var x = 0; x < source.Width; x += 1)
+                    action(source[x, y]);
         }
-        
+
         /// <summary>
         /// Возвращает новую Bitmap, все пиксели которой получены преобразованием пикселей
         /// заданного Bitmap определённым образои.
@@ -164,8 +164,8 @@ namespace FastBitmap
             using (var fastResult = new FastBitmap(result))
             {
                 for (var y = 0; y < fastResult.Height; y += 1)
-                for (var x = 0; x < fastResult.Width; x += 1)
-                    fastResult[x, y] = transform(source[x, y]);
+                    for (var x = 0; x < fastResult.Width; x += 1)
+                        fastResult[x, y] = transform(source[x, y]);
             }
 
             return result;
