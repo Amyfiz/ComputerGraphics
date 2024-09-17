@@ -10,6 +10,8 @@ using System.Windows.Forms;
 
 namespace Lab2
 {
+    using FastBitmap;
+
     public partial class Form1 : Form
     {
         public Form1()
