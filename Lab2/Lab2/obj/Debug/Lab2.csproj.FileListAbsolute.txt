@@ -9,3 +9,5 @@ A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Debug\Lab2.exe
 A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Debug\Lab2.pdb
 A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Debug\Lab2.Form3.resources
 A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Debug\Lab2.Form0.resources
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Debug\Lab2.Form2.resources
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Debug\Lab2.Form1.resources

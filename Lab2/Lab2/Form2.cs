@@ -17,7 +17,7 @@ namespace Lab2
     public partial class Form2 : Form
     {
         private Graphics graphics;
-        private string path = "../../images/ФРУКТЫ.jpg";
+        private string path = "../../../images/ФРУКТЫ.jpg";
         public Form2()
         {
             InitializeComponent();
@@ -28,7 +28,7 @@ namespace Lab2
         {
             graphics.Clear(Color.White);
 
-            Bitmap bitmap_orig = new Bitmap("../../../../images/ФРУКТЫ.jpg");
+            Bitmap bitmap_orig = new Bitmap(path);
             Bitmap bitmap = new Bitmap(bitmap_orig, new Size((int)(bitmap_orig.Width / 3f), (int)(bitmap_orig.Height / 3f)));
             Bitmap bitmap_red = new Bitmap(bitmap);
             Bitmap bitmap_green = new Bitmap(bitmap);
