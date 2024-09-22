@@ -1,0 +1,13 @@
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\bin\Release\Lab2.exe.config
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\bin\Release\Lab2.exe
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\bin\Release\Lab2.pdb
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.csproj.AssemblyReference.cache
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.Form0.resources
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.Form1.resources
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.Form2.resources
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.Form3.resources
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.Properties.Resources.resources
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.csproj.GenerateResource.cache
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.csproj.CoreCompileInputs.cache
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.exe
+A:\Projects\ComputerGraphics\ComputerGraphics\Lab2\Lab2\obj\Release\Lab2.pdb

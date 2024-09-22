@@ -16,153 +16,137 @@ namespace Lab2
 
     public partial class Form3 : Form
     {
-        private int BMWidth;
-        private int BMHeight;
-        
-        Bitmap bitmap;
-
-        private int Hue = 180;
-        private int Saturation = 50;
-        private int Value = 50;
-
-        private Graphics graphics;
+        private Image image;
+        private Bitmap initialImage;
+        private Bitmap newImage;
 
         private string initialImagePath = "../../../images/ФРУКТЫ.jpg";
         private string finalImagePath = "../../../images/RESULT.jpg";
 
-        ValueTuple<double, double, double>[,] HSVData;
-        ValueTuple<double, double, double>[,] HSVDataModified;
-
-        double[,] BMHue;
-        double[,] BMSaturation;
-        double[,] BMValue;
-
         public Form3()
         {
             InitializeComponent();
-            graphics = panel1.CreateGraphics();
+            image = Image.FromFile(initialImagePath);
+            pictureBox1.Image = image;
+
+            initialImage = new Bitmap(image);
+            newImage = new Bitmap(initialImage);
+
+            trackBar1.ValueChanged += (s, e) => HSVAdjustments();
+            trackBar2.ValueChanged += (s, e) => HSVAdjustments();
+            trackBar3.ValueChanged += (s, e) => HSVAdjustments();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void HSVAdjustments()
         {
-            bitmap = new Bitmap(initialImagePath);
-            BMWidth = bitmap.Width;
-            BMHeight = bitmap.Height;
-
-            bitmap = new Bitmap(bitmap, BMWidth, BMHeight);
-            graphics.DrawImage(bitmap, (panel1.Height - Height) / 2, (panel1.Width - Width) / 2);
-
-            BMHue = new double[BMWidth, BMHeight];
-            BMSaturation = new double[BMWidth, BMHeight];
-            BMValue = new double[BMWidth, BMHeight];
-
-            RGB_To_HSV(bitmap);
-        }
-
-        private void RGB_To_HSV(Bitmap bitmap)
-        {
-            using (var fastBitmap = new FastBitmap(bitmap))
-                for (var x = 0; x < fastBitmap.Width; x++)
-                    for (var y = 0; y < fastBitmap.Height; y++)
-                    {
-                        var color = fastBitmap[x, y];
-                        int max = Math.Max(color.R, Math.Max(color.G, color.B));
-                        int min = Math.Min(color.R, Math.Min(color.G, color.B));
-
-                        if (max == 0) { BMSaturation[x, y] = 0; }
-                        else { BMSaturation[x, y] = 1d - min / max; }
-
-                        BMValue[x, y] = max / 255d;
-
-                        if (max == min) { BMHue[x, y] = 0; continue; }
-                        if (max == color.R && color.G >= color.B) { BMHue[x, y] = 60 * (color.G - color.B) / (max - min); continue; }
-                        if (max == color.R && color.G < color.B) { BMHue[x, y] = 60 * (color.G - color.B) / (max - min) + 360; continue; }
-                        if (max == color.G) { BMHue[x, y] = 60 * (color.B - color.R) / (max - min) + 120; }
-                        if (max == color.B) { BMHue[x, y] = 60 * (color.R - color.G) / (max - min) + 240; }
-
-                    }
-        }
-
-        private void HSV_To_RGB(Bitmap bitmap)
-        {
+            Bitmap bitmap = new Bitmap(initialImage);
 
             using (var fastBitmap = new FastBitmap(bitmap))
             {
-                for (var x = 0; x < fastBitmap.Width; x++)
-                    for (var y = 0; y < fastBitmap.Height; y++)
-                    {
-                        int hi = Convert.ToInt32(Math.Floor(BMHue[x, y] / 60.0)) % 6;
-                        double f = BMHue[x, y] / 60d - Math.Floor(BMHue[x, y] / 60.0);
+                var hsvBitmap = fastBitmap.Select(color =>
+                {
+                    var (hue, saturation, value) = RGBtoHSV(color.R, color.G, color.B);
+                    hue = (hue + trackBar1.Value - 180) % 360;
 
-                        double value = BMValue[x, y] * 255d;
-                        int v = Convert.ToInt32(value);
-                        int p = Convert.ToInt32(value * (1d - BMSaturation[x, y]));
-                        int q = Convert.ToInt32(value * (1d - f * BMSaturation[x, y]));
-                        int t = Convert.ToInt32(value * (1d - (1d - f) * BMSaturation[x, y]));
+                    if (hue < 0) 
+                        hue += 360;
 
+                    saturation = Math.Min(1, Math.Max(saturation + ((trackBar2.Value - 50) / 50d), 0));
+                    value = Math.Min(1, Math.Max(value + ((trackBar3.Value - 50) / 50d), 0));
 
-                        if (hi == 0)
-                            fastBitmap[x, y] = Color.FromArgb(v, t, p);
-                        else if (hi == 1)
-                            fastBitmap[x, y] = Color.FromArgb(q, v, p);
-                        else if (hi == 2)
-                            fastBitmap[x, y] = Color.FromArgb(p, v, t);
-                        else if (hi == 3)
-                            fastBitmap[x, y] = Color.FromArgb(p, q, v);
-                        else if (hi == 4)
-                            fastBitmap[x, y] = Color.FromArgb(t, p, v);
-                        else
-                            fastBitmap[x, y] = Color.FromArgb(v, p, q);
-                    }
+                    return HSVtoRGB(hue, saturation, value);
+                });
+
+                newImage = hsvBitmap;
+                pictureBox1.Image = newImage;
             }
         }
 
-        private void trackBar1_Scroll(object sender, EventArgs e)
+        private (double hue, double saturation, double value) RGBtoHSV(int r, int g, int b)
         {
-            int delta = trackBar1.Value - Hue;
-            for (int x = 0; x < BMWidth; x++)
-                for (int y = 0; y < BMHeight; y++)
-                    BMHue[x, y] = (BMHue[x, y] + delta < 360) ? BMHue[x, y] + delta : BMHue[x, y] + delta - 360;
+            double red = r / 255.0;
+            double green = g / 255.0;
+            double blue = b / 255.0;
 
-            Hue = trackBar1.Value;
+            double max = Math.Max(Math.Max(red, green), blue);
+            double min = Math.Min(Math.Min(red, green), blue);
 
-            HSV_To_RGB(bitmap);
+            double delta = max - min;
 
-            graphics.DrawImage(bitmap, (panel1.Height - BMHeight) / 2, (panel1.Width - BMWidth) / 2);
+            double saturation = (max == 0) ? 0 : delta / max;
+            double value = max;
+            double hue;
+
+            if (delta == 0)
+                hue = 0;
+            else if (max == red)
+                hue = (green - blue) / delta + (green < blue ? 6 : 0);
+            else if (max == green)
+                hue = (blue - red) / delta + 2;
+            else
+                hue = (red - green) / delta + 4;
+            hue *= 60;
+
+            return (hue, saturation, value);
         }
 
-        private void trackBar2_Scroll(object sender, EventArgs e)
+        private Color HSVtoRGB(double hue, double saturation, double value)
         {
-            double delta = (trackBar2.Value - Saturation) / 100d;
-            for (int x = 0; x < BMSaturation.GetLength(0); x++)
-                for (int y = 0; y < BMSaturation.GetLength(1); y++)
-                    BMSaturation[x, y] = Math.Min(1, Math.Max(BMSaturation[x, y] + delta, 0d));
+            int hi = (int)Math.Floor(hue / 60) % 6;
+            double f = hue / 60 - Math.Floor(hue / 60);
+            double p = value * (1 - saturation);
+            double q = value * (1 - f * saturation);
+            double t = value * (1 - (1 - f) * saturation);
 
-            Saturation = trackBar2.Value;
+            double redBase, greenBase, blueBase;
 
-            HSV_To_RGB(bitmap);
+            switch (hi)
+            {
+                case 0:
+                    redBase = value;
+                    greenBase = t;
+                    blueBase = p;
+                    break;
+                case 1:
+                    redBase = q;
+                    greenBase = value;
+                    blueBase = p;
+                    break;
+                case 2:
+                    redBase = p;
+                    greenBase = value;
+                    blueBase = t;
+                    break;
+                case 3:
+                    redBase = p;
+                    greenBase = q;
+                    blueBase = value;
+                    break;
+                case 4:
+                    redBase = t;
+                    greenBase = p;
+                    blueBase = value;
+                    break;
+                case 5:
+                    redBase = value;
+                    greenBase = p;
+                    blueBase = q;
+                    break;
+                default:
+                    redBase = greenBase = blueBase = 0;
+                    break;
+            }
 
-            graphics.DrawImage(bitmap, (panel1.Height - BMHeight) / 2, (panel1.Width - BMWidth) / 2);
-        }
+            int R = (int)((redBase * 255) + 0.5);
+            int G = (int)((greenBase * 255) + 0.5);
+            int B = (int)((blueBase * 255) + 0.5);
 
-        private void trackBar3_Scroll(object sender, EventArgs e)
-        {
-            double delta = (trackBar3.Value - Value) / 100d;
-            for (int x = 0; x < BMValue.GetLength(0); x++)
-                for (int y = 0; y < BMValue.GetLength(1); y++)
-                    BMValue[x, y] = Math.Min(1, Math.Max(BMValue[x, y] + delta, 0));
-
-            Value = trackBar3.Value;
-
-            HSV_To_RGB(bitmap);
-
-            graphics.DrawImage(bitmap, (panel1.Height - BMHeight) / 2, (panel1.Width - BMWidth) / 2);
+            return Color.FromArgb(R, G, B);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            HSV_To_RGB(bitmap);
-            bitmap.Save(finalImagePath);
+            newImage.Save(finalImagePath, System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 }
